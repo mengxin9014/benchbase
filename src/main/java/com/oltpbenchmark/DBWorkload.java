@@ -18,10 +18,7 @@
 
 package com.oltpbenchmark;
 
-import com.oltpbenchmark.api.BenchmarkModule;
-import com.oltpbenchmark.api.TransactionType;
-import com.oltpbenchmark.api.TransactionTypes;
-import com.oltpbenchmark.api.Worker;
+import com.oltpbenchmark.api.*;
 import com.oltpbenchmark.types.DatabaseType;
 import com.oltpbenchmark.util.*;
 import org.apache.commons.cli.*;
@@ -41,7 +38,9 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.sql.Connection;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.*;
 
 public class DBWorkload {
@@ -616,9 +615,34 @@ public class DBWorkload {
     }
 
     private static Results runWorkload(List<BenchmarkModule> benchList, int intervalMonitor) throws IOException {
+         final SQLStmt createview_stmt_chbenchmark = new SQLStmt(
+                "CREATE view revenue0 (supplier_no, total_revenue) AS "
+                        + "SELECT "
+                        + "mod((s_w_id * s_i_id),10000) as supplier_no, "
+                        + "sum(ol_amount) as total_revenue "
+                        + "FROM "
+                        + "order_line, stock "
+                        + "WHERE "
+                        + "ol_i_id = s_i_id "
+                        + "AND ol_supply_w_id = s_w_id "
+                        + "AND ol_delivery_d >= '2007-01-02 00:00:00.000000' "
+                        + "GROUP BY "
+                        + "supplier_no"
+        );
+        final SQLStmt dropview_stmt_chbenchmark = new SQLStmt(
+                "DROP VIEW revenue0"
+        );
         List<Worker<?>> workers = new ArrayList<>();
         List<WorkloadConfiguration> workConfs = new ArrayList<>();
         for (BenchmarkModule bench : benchList) {
+            if (bench.getBenchmarkName().equals("chbenchmark")) {
+                try (Connection conn = bench.makeConnection();
+                     Statement stmt = conn.createStatement()) {
+                    stmt.executeUpdate(createview_stmt_chbenchmark.getSQL());
+                } catch (SQLException e) {
+                    LOG.error("make bench : {} connection failed", bench.getBenchmarkName());
+                }
+            }
             LOG.info("Creating {} virtual terminals...", bench.getWorkloadConfiguration().getTerminals());
             workers.addAll(bench.makeWorkers());
 
@@ -630,6 +654,17 @@ public class DBWorkload {
         Results r = ThreadBench.runRateLimitedBenchmark(workers, workConfs, intervalMonitor);
         LOG.info(SINGLE_LINE);
         LOG.info("Rate limited reqs/s: {}", r);
+
+        for (BenchmarkModule bench : benchList) {
+            if (bench.getBenchmarkName().equals("chbenchmark")) {
+                try (Connection conn = bench.makeConnection();
+                     Statement stmt = conn.createStatement()) {
+                    stmt.executeUpdate(dropview_stmt_chbenchmark.getSQL());
+                } catch (SQLException e) {
+                    LOG.error("delete bench : {} connection failed", bench.getBenchmarkName());
+                }
+            }
+        }
         return r;
     }
 

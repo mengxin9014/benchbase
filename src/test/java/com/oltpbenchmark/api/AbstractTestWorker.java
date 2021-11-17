@@ -73,7 +73,7 @@ public abstract class AbstractTestWorker<T extends BenchmarkModule> extends Abst
     public void testExecuteWork() throws Exception {
         this.benchmark.createDatabase();
         this.benchmark.loadDatabase();
-        this.conn.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
+//        this.conn.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
 
         Worker<?> w = workers.get(0);
         assertNotNull(w);
