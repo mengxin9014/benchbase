@@ -65,10 +65,10 @@ public class Q15 extends GenericQuery {
         // query, then drop it once we're done.
         try (Statement stmt = conn.createStatement()) {
             try {
-                stmt.executeUpdate(createview_stmt.getSQL());
+//                stmt.executeUpdate(createview_stmt.getSQL());
                 super.run(conn);
             } finally {
-                stmt.executeUpdate(dropview_stmt.getSQL());
+//                stmt.executeUpdate(dropview_stmt.getSQL());
             }
         }
     }
