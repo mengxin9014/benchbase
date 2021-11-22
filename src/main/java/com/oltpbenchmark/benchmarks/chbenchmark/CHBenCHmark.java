@@ -26,6 +26,7 @@ import com.oltpbenchmark.benchmarks.chbenchmark.queries.Q1;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -47,8 +48,12 @@ public class CHBenCHmark extends BenchmarkModule {
 
         int numTerminals = workConf.getTerminals();
         LOG.info(String.format("Creating %d workers for CHBenCHMark", numTerminals));
-        for (int i = 0; i < numTerminals; i++) {
-            workers.add(new CHBenCHmarkWorker(this, i));
+        try {
+            for (int i = 0; i < numTerminals; i++) {
+                workers.add(new CHBenCHmarkWorker(this, i));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
 
         return workers;

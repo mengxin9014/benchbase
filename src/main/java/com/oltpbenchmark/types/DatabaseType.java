@@ -39,6 +39,8 @@ public enum DatabaseType {
     MONETDB(false, false),
     MYROCKS(true, false),
     MYSQL(true, false),
+    TIDB(true, false),
+    TIKV( true, false),
     NOISEPAGE(false, false),
     NUODB(true, false),
     ORACLE(true, false),

@@ -22,12 +22,14 @@ import com.oltpbenchmark.api.Procedure.UserAbortException;
 import com.oltpbenchmark.api.TransactionType;
 import com.oltpbenchmark.api.Worker;
 import com.oltpbenchmark.benchmarks.tpcc.procedures.TPCCProcedure;
+import com.oltpbenchmark.types.DatabaseType;
 import com.oltpbenchmark.types.TransactionStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.Random;
 
 public class TPCCWorker extends Worker<TPCCBenchmark> {
@@ -47,9 +49,18 @@ public class TPCCWorker extends Worker<TPCCBenchmark> {
 
     public TPCCWorker(TPCCBenchmark benchmarkModule, int id,
                       int terminalWarehouseID, int terminalDistrictLowerID,
-                      int terminalDistrictUpperID, int numWarehouses) {
+                      int terminalDistrictUpperID, int numWarehouses) throws SQLException {
         super(benchmarkModule, id);
-
+        if (benchmarkModule.getWorkloadConfiguration().getDatabaseType() == DatabaseType.TIDB) {
+            Statement stmt = conn.createStatement();
+            stmt.execute("set @@global.tidb_txn_mode='optimistic'");
+            stmt.execute("set @@global.tidb_skip_isolation_level_check=1");
+            // set storage type if needed
+            if (benchmarkModule.getWorkloadConfiguration().getDBStorageType().toLowerCase().equals("tikv")) {
+                stmt.execute("set tidb_isolation_read_engines=\"tikv\"");
+            }
+            stmt.close();
+        }
         this.terminalWarehouseID = terminalWarehouseID;
         this.terminalDistrictLowerID = terminalDistrictLowerID;
         this.terminalDistrictUpperID = terminalDistrictUpperID;

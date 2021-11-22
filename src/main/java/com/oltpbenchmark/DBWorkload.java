@@ -119,6 +119,7 @@ public class DBWorkload {
             wrkld.setDatabaseType(DatabaseType.get(xmlConfig.getString("type")));
             wrkld.setDriverClass(xmlConfig.getString("driver"));
             wrkld.setUrl(xmlConfig.getString("url"));
+            wrkld.setDBStorageType(xmlConfig.getString("storageType", "auto"));
             wrkld.setUsername(xmlConfig.getString("username"));
             wrkld.setPassword(xmlConfig.getString("password"));
             wrkld.setBatchSize(xmlConfig.getInt("batchsize", 128));

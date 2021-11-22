@@ -2,74 +2,34 @@
 <parameters>
 
     <!-- Connection details -->
-    <type>MYSQL</type>
+    <type>tidb</type>
+    <storageType>auto</storageType>
     <driver>com.mysql.cj.jdbc.Driver</driver>
-    <url>jdbc:mysql://localhost:3306/benchbase?rewriteBatchedStatements=true</url>
-    <username>admin</username>
-    <password>password</password>
+    <url>jdbc:mysql://172.16.4.97:4000/benchbase?rewriteBatchedStatements=true</url>
+    <username>root</username>
+    <password></password>
     <isolation>TRANSACTION_SERIALIZABLE</isolation>
     <batchsize>128</batchsize>
+    <terminals>2</terminals>
 
     <!-- Scale factor is the number of warehouses in TPCC -->
     <scalefactor>1</scalefactor>
 
-    <!-- The workload -->
-    <!-- Number of terminal per workload -->
-    <terminals>32</terminals>
 
-    <!-- Extra Features (Commented Out) -->
-    <!-- Can be workload-specific -->
-    <!-- <terminals bench="tpcc">2</terminals> -->
-
-    <!-- Workload-specific options a marked with @bench=[workload_name] -->
-    <!-- Workload-specific number of terminals -->
-    <!-- <terminals bench="chbenchmark">2</terminals> -->
-
+    <!-- A Basic WorkPhase for Mixed Workloads -->
     <works>
-
-        <!-- A Basic WorkPhase for Mixed Workloads -->
         <work>
-            <time>60</time>
+            <time>900</time>
+            <warmup>300</warmup>
+            <rate>unlimited</rate>
 
-            <!-- Note: The rate can be set to UNLIMITED or DISABLED -->
-            <rate>200</rate>
-
-            <!-- Need to Specify transaction weights for each workload .. Otherwise the number of fields won't match -->
-            <weights bench="tpcc">45,43,4,4,4</weights>
             <weights bench="chbenchmark">3, 2, 3, 2, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5</weights>
-        </work>
-
-        <!-- Extra features showcase -->
-        <!-- Extra features showcase -->
-        <!-- <work> -->
-        <!-- <time>60</time> -->
-
-        <!-- <rate>200</rate> -->
-        <!-- <rate bench="chbenchmark">disabled</rate> -->
-
-        <!-- NOTE: TPCC workers won't be distributed evenly between warehouses if not all workers are active -->
-        <!-- <active_terminals>1</active_terminals> -->
-        <!-- <active_terminals bench="chbenchmark">1</active_terminals> -->
-
-        <!-- Specifies transaction weight for each workload. -->
-        <!-- <weights bench="tpcc">45,43,4,4,4</weights> -->
-        <!-- <weights bench="chbenchmark">3, 2, 3, 2, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5</weights> -->
-        <!-- </work> -->
-
-        <!-- Extra features -->
-        <!--
-        <work>
-            <time>60</time>
-
-            <rate>100</rate>
-            <rate bench="chbenchmark">unlimited</rate>
+            <active_terminals bench="chbenchmark">1</active_terminals>
 
             <weights bench="tpcc">45,43,4,4,4</weights>
-            <weights bench="chbenchmark">3, 2, 3, 2, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5</weights>
+            <active_terminals bench="tpcc">1</active_terminals>
         </work>
-        -->
     </works>
-
 
     <!-- CH specific -->
     <transactiontypes bench="chbenchmark">
@@ -159,4 +119,5 @@
             <name>StockLevel</name>
         </transactiontype>
     </transactiontypes>
+
 </parameters>
