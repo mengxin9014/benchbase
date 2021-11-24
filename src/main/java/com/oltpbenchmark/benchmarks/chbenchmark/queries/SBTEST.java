@@ -22,13 +22,20 @@ import com.oltpbenchmark.api.SQLStmt;
 public class SBTEST extends GenericQuery {
 
     public int id = 0;
+    public int tableNumber = 0;
     public final SQLStmt query_stmt = new SQLStmt(
             "SELECT count(*) from sbtest"
     );
 
+    public void setTableNumber(int tableNumber) {
+        this.tableNumber = tableNumber;
+    }
+
     protected SQLStmt get_query() {
         id++;
-        if (id>16) id = 1;
+        if (id > tableNumber) {
+            id = 1;
+        }
         return new SQLStmt(query_stmt.getSQL()+id);
     }
 }

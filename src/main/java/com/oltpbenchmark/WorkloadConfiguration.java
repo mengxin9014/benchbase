@@ -35,6 +35,7 @@ public class WorkloadConfiguration {
     private String url;
     private String username;
     private String password;
+    private int tableNumber;
     private String driverClass;
     private int batchSize;
     private int maxRetries;
@@ -93,6 +94,14 @@ public class WorkloadConfiguration {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public int getTableNumber() {
+        return tableNumber;
+    }
+
+    public void setTableNumber(int tableNumber) {
+        this.tableNumber = tableNumber;
     }
 
     public String getDriverClass() {

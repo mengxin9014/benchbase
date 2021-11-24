@@ -8,6 +8,7 @@
     <url>jdbc:mysql://172.16.4.97:4000/benchbase?rewriteBatchedStatements=true</url>
     <username>root</username>
     <password></password>
+    <tableNumber>1</tableNumber>
     <isolation>TRANSACTION_SERIALIZABLE</isolation>
     <batchsize>128</batchsize>
     <terminals>2</terminals>

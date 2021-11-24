@@ -122,6 +122,7 @@ public class DBWorkload {
             wrkld.setDBStorageType(xmlConfig.getString("storageType", "auto"));
             wrkld.setUsername(xmlConfig.getString("username"));
             wrkld.setPassword(xmlConfig.getString("password"));
+            wrkld.setTableNumber(xmlConfig.getInt("tableNumber"));
             wrkld.setBatchSize(xmlConfig.getInt("batchsize", 128));
             wrkld.setMaxRetries(xmlConfig.getInt("retries", 3));
 

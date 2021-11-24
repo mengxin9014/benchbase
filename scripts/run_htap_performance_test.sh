@@ -30,9 +30,10 @@ resultDir=result
 if [ -d "resultDir" ]
 then
 	echo $resultDir already exists
-	exit 1
+else
+  mkdir $resultDir
 fi
-mkdir $resultDir
+
 
 ap_threads="1 5 10 20 30"
 mysql_info=$(grep url config/tidb/chbenchmark_config_base.xml | sed  's/.*jdbc:mysql:\/\/\(.*\)?.*/\1/g')
@@ -42,6 +43,7 @@ database=${info_arr[1]}
 ip_port_arr=(${ip_port//:/ })
 ip=${ip_port_arr[0]}
 port=${ip_port_arr[1]}
+url="jdbc:mysql:\/\/$ip_port\/$database?rewriteBatchedStatements=true"
 
 mysql --host $ip --port $port -u root -e "create database if not exists benchbase"
 
@@ -63,10 +65,10 @@ do
 
     wait_table benchbase "$tables" "mysql --host $ip --port $port -u root -e"
 
-    cat config/tidb/querys/chbenchmark_config_tp_base.xml | sed "s/<scalefactor>.*<\/scalefactor>/<scalefactor>${wd}<\/scalefactor>/g"  > config/tidb/querys/chbenchmark_config_tp.xml
+    cat config/tidb/querys/chbenchmark_config_tp_base.xml | sed "s/<scalefactor>.*<\/scalefactor>/<scalefactor>${wd}<\/scalefactor>/g" | sed "s/<url>.*<\/url>/<url>${url}<\/url>/g" > config/tidb/querys/chbenchmark_config_tp.xml
     java -jar benchbase.jar -b tpcc -c config/tidb/querys/chbenchmark_config_tp.xml --create=false --load=false --execute=true -d $resultDir/outputfile_tidb_query_${query}_ap_${ap}_tp &
 
-  	cat config/tidb/querys/chbenchmark_config_ap_base.xml | sed "s/<scalefactor>.*<\/scalefactor>/<scalefactor>${wd}<\/scalefactor>/g" | sed "s/<name>.*<\/name>/<name>${query}<\/name>/g" | sed "s/<active_terminals bench=\"chbenchmark\">.*<\/active_terminals>/<active_terminals bench=\"chbenchmark\">${ap}<\/active_terminals>/g" | sed "s/<terminals>.*<\/terminals>/<terminals>${ap}<\/terminals>/g" > config/tidb/querys/chbenchmark_config_ap_${query}.xml
+  	cat config/tidb/querys/chbenchmark_config_ap_base.xml | sed "s/<scalefactor>.*<\/scalefactor>/<scalefactor>${wd}<\/scalefactor>/g" | sed "s/<url>.*<\/url>/<url>${url}<\/url>/g" | sed "s/<name>.*<\/name>/<name>${query}<\/name>/g" | sed "s/<active_terminals bench=\"chbenchmark\">.*<\/active_terminals>/<active_terminals bench=\"chbenchmark\">${ap}<\/active_terminals>/g" | sed "s/<terminals>.*<\/terminals>/<terminals>${ap}<\/terminals>/g" > config/tidb/querys/chbenchmark_config_ap_${query}.xml
     java -jar benchbase.jar -b chbenchmark -c config/tidb/querys/chbenchmark_config_ap_${query}.xml --create=false --load=false --execute=true -d $resultDir/outputfile_tidb_query_${query}_ap_${ap}_ap &
     wait
   done

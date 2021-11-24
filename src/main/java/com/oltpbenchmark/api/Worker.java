@@ -19,6 +19,7 @@ package com.oltpbenchmark.api;
 
 import com.oltpbenchmark.*;
 import com.oltpbenchmark.api.Procedure.UserAbortException;
+import com.oltpbenchmark.benchmarks.chbenchmark.queries.SBTEST;
 import com.oltpbenchmark.types.DatabaseType;
 import com.oltpbenchmark.types.State;
 import com.oltpbenchmark.types.TransactionStatus;
@@ -84,8 +85,12 @@ public abstract class Worker<T extends BenchmarkModule> implements Runnable {
         this.procedures.putAll(this.benchmarkModule.getProcedures());
         for (Entry<TransactionType, Procedure> e : this.procedures.entrySet()) {
             Procedure proc = e.getValue();
+            if (proc.getProcedureName().equals("SBTEST")) {
+                ((SBTEST) proc).setTableNumber(this.configuration.getTableNumber());
+            }
             this.name_procedures.put(e.getKey().getName(), proc);
             this.class_procedures.put(proc.getClass(), proc);
+
         }
     }
 
