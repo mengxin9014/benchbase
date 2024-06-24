@@ -33,6 +33,7 @@ public class Q9 extends GenericQuery {
                     + "oorder, "
                     + "nation "
                     + "WHERE ol_i_id = s_i_id "
+                    + "AND s_i_id = i_id "
                     + "AND ol_supply_w_id = s_w_id "
                     + "AND MOD ((s_w_id * s_i_id), 10000) = su_suppkey "
                     + "AND ol_w_id = o_w_id "

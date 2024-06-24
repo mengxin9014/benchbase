@@ -35,12 +35,14 @@ public class WorkloadConfiguration {
     private String url;
     private String username;
     private String password;
+    private int tableNumber;
     private String driverClass;
     private int batchSize;
     private int maxRetries;
     private double scaleFactor = 1.0;
     private double selectivity = -1.0;
     private int terminals;
+    private String db_storage_type;
     private int loaderThreads = ThreadUtil.availableProcessors();
     private XMLConfiguration xmlConfig = null;
     private WorkloadState workloadState;
@@ -92,6 +94,14 @@ public class WorkloadConfiguration {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public int getTableNumber() {
+        return tableNumber;
+    }
+
+    public void setTableNumber(int tableNumber) {
+        this.tableNumber = tableNumber;
     }
 
     public String getDriverClass() {
@@ -209,6 +219,14 @@ public class WorkloadConfiguration {
         } catch (ClassNotFoundException ex) {
             throw new RuntimeException("Failed to initialize JDBC driver '" + this.driverClass + "'", ex);
         }
+    }
+
+    public void setDBStorageType(String storage_type) {
+        this.db_storage_type = storage_type;
+    }
+
+    public String getDBStorageType() {
+        return db_storage_type;
     }
 
     public int getTerminals() {

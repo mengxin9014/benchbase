@@ -22,7 +22,7 @@ import com.oltpbenchmark.api.SQLStmt;
 public class Q18 extends GenericQuery {
 
     public final SQLStmt query_stmt = new SQLStmt(
-            "SELECT c_last, "
+            "SELECT COUNT(*) from  (SELECT c_last, "
                     + "c_id, "
                     + "o_id, "
                     + "o_entry_d, "
@@ -44,7 +44,7 @@ public class Q18 extends GenericQuery {
                     + "c_last, "
                     + "o_entry_d, "
                     + "o_ol_cnt HAVING sum(ol_amount) > 200 "
-                    + "ORDER BY amount_sum DESC, o_entry_d"
+                    + "ORDER BY amount_sum DESC, o_entry_d) as a"
     );
 
     protected SQLStmt get_query() {

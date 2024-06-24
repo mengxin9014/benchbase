@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+<parameters>
+
+    <!-- Connection details -->
+    <type>tidb</type>
+    <storageType>auto</storageType>
+    <driver>com.mysql.cj.jdbc.Driver</driver>
+    <url>jdbc:mysql://172.16.4.97:4000/sbtest?rewriteBatchedStatements=true</url>
+    <username>root</username>
+    <password></password>
+    <tableNumber>8</tableNumber>
+    <isolation>TRANSACTION_SERIALIZABLE</isolation>
+    <batchsize>128</batchsize>
+    <terminals>1</terminals>
+
+    <!-- Scale factor is the number of warehouses in TPCC -->
+    <scalefactor>1</scalefactor>
+
+    <!-- A Basic WorkPhase for Mixed Workloads -->
+    <works>
+        <work>
+            <time>60</time>
+            <rate>unlimited</rate>
+            <weights bench="chbenchmark">100</weights>
+            <active_terminals bench="chbenchmark">1</active_terminals>
+        </work>
+    </works>
+
+    <!-- CH specific -->
+    <transactiontypes bench="chbenchmark">
+        <transactiontype>
+            <name>SBTEST</name>
+        </transactiontype>
+    </transactiontypes>
+</parameters>

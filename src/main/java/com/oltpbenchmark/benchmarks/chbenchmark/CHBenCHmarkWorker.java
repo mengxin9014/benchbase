@@ -21,14 +21,28 @@ import com.oltpbenchmark.api.Procedure.UserAbortException;
 import com.oltpbenchmark.api.TransactionType;
 import com.oltpbenchmark.api.Worker;
 import com.oltpbenchmark.benchmarks.chbenchmark.queries.GenericQuery;
+import com.oltpbenchmark.types.DatabaseType;
 import com.oltpbenchmark.types.TransactionStatus;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.sql.Statement;
 
 public class CHBenCHmarkWorker extends Worker<CHBenCHmark> {
-    public CHBenCHmarkWorker(CHBenCHmark benchmarkModule, int id) {
+    public CHBenCHmarkWorker(CHBenCHmark benchmarkModule, int id) throws SQLException {
         super(benchmarkModule, id);
+        if (benchmarkModule.getWorkloadConfiguration().getDatabaseType() == DatabaseType.TIDB) {
+            // set storage type if needed
+            Statement stmt = conn.createStatement();
+            stmt.execute("set @@global.tidb_txn_mode='optimistic'");
+            stmt.execute("set @@global.tidb_skip_isolation_level_check=1");
+            if (benchmarkModule.getWorkloadConfiguration().getDBStorageType().equalsIgnoreCase("tikv")) {
+                stmt.execute("set tidb_isolation_read_engines=\"tikv\"");
+            } else if (benchmarkModule.getWorkloadConfiguration().getDBStorageType().equalsIgnoreCase("tiflash")) {
+                stmt.execute("set tidb_isolation_read_engines=\"tiflash\"");
+            }
+            stmt.close();
+        }
     }
 
     @Override

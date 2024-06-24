@@ -1,0 +1,47 @@
+<?xml version="1.0"?>
+<parameters>
+
+    <!-- Connection details -->
+    <type>tidb</type>
+    <storageType>tikv</storageType>
+    <driver>com.mysql.cj.jdbc.Driver</driver>
+    <url>jdbc:mysql://172.16.4.97:4000/benchbase?rewriteBatchedStatements=true</url>
+    <username>root</username>
+    <password></password>
+    <tableNumber>1</tableNumber>
+    <isolation>TRANSACTION_SERIALIZABLE</isolation>
+    <batchsize>128</batchsize>
+    <terminals>1</terminals>
+
+    <!-- Scale factor is the number of warehouses in TPCC -->
+    <scalefactor>1</scalefactor>
+
+    <!-- A Basic WorkPhase for Mixed Workloads -->
+    <works>
+        <work>
+            <time>60</time>
+            <rate>unlimited</rate>
+            <weights bench="tpcc">45,43,4,4,4</weights>
+            <active_terminals bench="tpcc">1</active_terminals>
+        </work>
+    </works>
+
+    <!-- TPCC specific -->
+    <transactiontypes bench="tpcc">
+        <transactiontype>
+            <name>NewOrder</name>
+        </transactiontype>
+        <transactiontype>
+            <name>Payment</name>
+        </transactiontype>
+        <transactiontype>
+            <name>OrderStatus</name>
+        </transactiontype>
+        <transactiontype>
+            <name>Delivery</name>
+        </transactiontype>
+        <transactiontype>
+            <name>StockLevel</name>
+        </transactiontype>
+    </transactiontypes>
+</parameters>
